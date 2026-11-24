@@ -6,7 +6,68 @@
     <title>ChessStation</title>
   </head>
   <body>
-    <main id="app"></main>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="wordmark" href="#/">
+          <span class="wordmark-icon" aria-hidden="true"></span>
+          <span class="header-label">ChessStation</span>
+        </a>
+        <nav aria-label="Основная навигация">
+          <a class="nav-link" href="#/"><span class="header-label">Партии</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell workspace">
+      <section id="catalog" hidden>
+        <h1 class="page-title">Партии</h1>
+        <a class="primary-link" href="#/new">Новая партия</a>
+      </section>
+
+      <section id="editor" aria-labelledby="editor-title" hidden>
+        <div class="editor-layout">
+          <div class="board-frame">
+            <div class="board-coordinates board-ranks" aria-hidden="true"></div>
+            <div id="board" class="board" role="group" aria-label="Шахматная доска. Белые снизу"></div>
+            <div class="board-coordinates board-files" aria-hidden="true"></div>
+          </div>
+
+          <section class="panel moves-panel" aria-labelledby="moves-title">
+            <div class="panel-heading moves-heading">
+              <h2 id="moves-title">Ходы</h2>
+              <p id="turn" class="turn"></p>
+            </div>
+            <p class="moves-empty">Ходов пока нет</p>
+          </section>
+
+          <div class="game-sidebar">
+            <h1 id="editor-title" class="page-title">Новая партия</h1>
+            <section class="panel" aria-labelledby="details-title">
+              <h2 id="details-title" class="panel-heading">Сведения о партии</h2>
+              <dl class="game-details">
+                <div>
+                  <dt>Событие</dt>
+                  <dd>Не указано</dd>
+                </div>
+                <div>
+                  <dt>Дата</dt>
+                  <dd>Не указана</dd>
+                </div>
+                <div>
+                  <dt>Результат</dt>
+                  <dd>Не определён</dd>
+                </div>
+              </dl>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="not-found" hidden>
+        <h1 class="page-title">Страница не найдена</h1>
+        <a class="primary-link" href="#/">К списку партий</a>
+      </section>
+    </main>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
