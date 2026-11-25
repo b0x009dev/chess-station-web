@@ -19,13 +19,40 @@
     </header>
 
     <main class="shell workspace">
+      <p id="import-message" class="message message-error import-message" role="alert" hidden></p>
+      <input id="pgn-file" type="file" accept=".pgn,application/x-chess-pgn" hidden>
+
       <section id="catalog" hidden>
-        <h1 class="page-title">Партии</h1>
-        <a class="primary-link" href="#/new">Новая партия</a>
+        <div class="catalog-heading">
+          <h1 class="page-title">Партии</h1>
+          <div class="actions">
+            <button type="button" data-import>Импорт PGN</button>
+            <a class="primary-link" href="#/new">Новая партия</a>
+          </div>
+        </div>
+        <form id="search-form" class="search-form" role="search">
+          <label for="player">Имя игрока</label>
+          <div class="search-controls">
+            <input id="player" type="search" name="player" autocomplete="off">
+            <button type="submit">Найти</button>
+          </div>
+        </form>
+        <div class="panel catalog-results" aria-label="Список партий">
+          <p id="catalog-message" class="message" role="status"></p>
+          <div id="catalog-columns" class="game-row panel-heading" aria-hidden="true" hidden>
+            <span>Белые</span><span>Чёрные</span><span>Событие</span><span>Дата</span><span>Результат</span>
+          </div>
+          <ul id="games" class="games"></ul>
+        </div>
+        <nav id="pagination" class="pagination" aria-label="Страницы списка" hidden>
+          <button type="button" id="previous-page" aria-label="Предыдущая страница">←</button>
+          <span id="page-count"></span>
+          <button type="button" id="next-page" aria-label="Следующая страница">→</button>
+        </nav>
       </section>
 
       <section id="editor" aria-labelledby="editor-title" hidden>
-        <div class="editor-layout">
+        <div id="editor-layout" class="editor-layout">
           <div class="board-frame">
             <div class="board-coordinates board-ranks" aria-hidden="true"></div>
             <div id="board" class="board" role="group" aria-label="Шахматная доска. Белые снизу"></div>
@@ -37,37 +64,74 @@
               <h2 id="moves-title">Ходы</h2>
               <p id="turn" class="turn"></p>
             </div>
-            <p class="moves-empty">Ходов пока нет</p>
+            <div class="history-controls" aria-label="Навигация по ходам">
+              <button type="button" data-step="start" title="Начало" aria-label="Начало партии">|‹</button>
+              <button type="button" data-step="previous" title="Предыдущий ход" aria-label="Предыдущий ход">‹</button>
+              <button type="button" data-step="next" title="Следующий ход" aria-label="Следующий ход">›</button>
+              <button type="button" data-step="end" title="Конец" aria-label="Конец партии">›|</button>
+            </div>
+            <p id="moves-empty" class="moves-empty">Ходов пока нет</p>
+            <ol id="moves" class="moves" hidden></ol>
           </section>
 
           <div class="game-sidebar">
             <h1 id="editor-title" class="page-title">Новая партия</h1>
-            <section class="panel" aria-labelledby="details-title">
+            <section id="details" class="panel" aria-labelledby="details-title">
               <h2 id="details-title" class="panel-heading">Сведения о партии</h2>
-              <dl class="game-details">
-                <div>
-                  <dt>Событие</dt>
-                  <dd>Не указано</dd>
-                </div>
-                <div>
-                  <dt>Дата</dt>
-                  <dd>Не указана</dd>
-                </div>
-                <div>
-                  <dt>Результат</dt>
-                  <dd>Не определён</dd>
-                </div>
-              </dl>
+              <form id="metadata" class="game-details" autocomplete="off">
+                <label>Белые <input name="White"><small data-error="White" hidden></small></label>
+                <label>Чёрные <input name="Black"><small data-error="Black" hidden></small></label>
+                <label>Событие <input name="Event"><small data-error="Event" hidden></small></label>
+                <label>Дата <input name="Date" spellcheck="false" placeholder="ГГГГ.ММ.ДД"><small data-error="Date" hidden></small></label>
+                <label>Результат
+                  <select name="Result">
+                    <option value="*">Не определён</option>
+                    <option value="1-0">1–0 · победа белых</option>
+                    <option value="0-1">0–1 · победа чёрных</option>
+                    <option value="1/2-1/2">½–½ · ничья</option>
+                  </select>
+                  <small data-error="Result" hidden></small>
+                </label>
+              </form>
             </section>
+            <p id="unsupported-message" class="message" hidden></p>
+            <div id="editor-actions" class="editor-actions">
+              <button type="submit" form="metadata" class="primary-link" id="save-game">Сохранить</button>
+              <button type="button" id="flip-board">Перевернуть доску</button>
+              <button type="button" id="view-pgn">Просмотр PGN</button>
+              <button type="button" id="export-pgn">Экспорт PGN</button>
+              <button type="button" data-import>Импорт PGN</button>
+              <button type="button" id="delete-game" class="danger-button">Удалить</button>
+            </div>
+            <p id="editor-message" class="message" role="status" hidden></p>
+            <a class="nav-link back-link" href="#/">К списку партий</a>
           </div>
         </div>
       </section>
 
       <section id="not-found" hidden>
-        <h1 class="page-title">Страница не найдена</h1>
+        <h1 id="route-title" class="page-title">Страница не найдена</h1>
+        <p id="route-message" class="message" role="status" hidden></p>
         <a class="primary-link" href="#/">К списку партий</a>
+        <button type="button" id="retry-game" hidden>Повторить</button>
       </section>
     </main>
+
+    <dialog id="promotion" aria-labelledby="promotion-title">
+      <h2 id="promotion-title">Превращение пешки</h2>
+      <form method="dialog">
+        <div id="promotion-pieces" class="promotion-pieces"></div>
+        <button value="cancel">Отмена</button>
+      </form>
+    </dialog>
+
+    <dialog id="pgn-dialog" aria-labelledby="pgn-title">
+      <div class="dialog-heading">
+        <h2 id="pgn-title">Запись PGN</h2>
+        <form method="dialog"><button>Закрыть</button></form>
+      </div>
+      <pre id="pgn-text" tabindex="0"></pre>
+    </dialog>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

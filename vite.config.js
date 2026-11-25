@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         [`${base}api/v1`]: {
           target: API_PROXY_TARGET || 'http://127.0.0.1:3001',
-          rewrite: path => path.replace(base, '/'),
+          rewrite: (path) => path.replace(base, '/'),
         },
       },
     },
